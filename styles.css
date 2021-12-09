@@ -18,7 +18,7 @@
 	font-size: 1.3rem;
 }
 
-.game-tile {
+.tile {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -27,6 +27,6 @@
 	user-select: none;
 }
 
-.game-tile:hover {
+.tile:hover {
 	background: #ddd;
 }
