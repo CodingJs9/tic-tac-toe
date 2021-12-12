@@ -1,6 +1,8 @@
 // Player factory function
 const Player = (marker) => {
-	return { marker };
+	const getMarker = () => marker;
+
+	return { getMarker };
 };
 
 // gameBoard module
@@ -11,8 +13,21 @@ const gameBoard = (() => {
 })();
 
 const gameController = (() => {
+	const playerX = Player('X');
+	const playerO = Player('O');
+
+	let currentTurn = playerX.getMarker();
+
+	const decideTurn = () => {
+		currentTurn === playerX.getMarker()
+			? (currentTurn = playerO.getMarker())
+			: (currentTurn = playerX.getMarker());
+	};
+
 	const placeMarker = (tile) => {
-		gameBoard.board[tile.dataset.id] = 'X';
+		if (gameBoard.board[tile.dataset.id] !== '') return;
+		gameBoard.board[tile.dataset.id] = currentTurn;
+		decideTurn();
 		displayController.clearAndRender();
 	};
 
@@ -23,30 +38,37 @@ const displayController = (() => {
 	const grid = document.querySelector('.game-grid');
 	let idCounter = 0;
 
-	const createGrid = (tileContent) => {
+	const createTile = (tileContent) => {
 		const tile = document.createElement('div');
 		tile.classList.add('tile');
 		tile.dataset.id = idCounter;
 		tile.innerText = tileContent;
 		tile.addEventListener('click', () => {
-			gameController.placeMarker(tile);
+			gameController.placeMarker(tile, idCounter);
 		});
 		grid.appendChild(tile);
 		idCounter++;
 	};
 
-	const clearAndRender = () => {
+	const clearGrid = () => {
 		while (grid.firstChild) {
 			grid.removeChild(grid.firstChild);
 		}
 		idCounter = 0;
+	};
 
+	const render = () => {
 		for (let i = 0; i < gameBoard.board.length; i++) {
-			createGrid(gameBoard.board[i]);
+			createTile(gameBoard.board[i]);
 		}
 	};
 
-	return { clearAndRender };
+	const clearAndRender = () => {
+		clearGrid();
+		render();
+	};
+
+	return { clearAndRender, render };
 })();
 
-displayController.clearAndRender();
+displayController.render();
