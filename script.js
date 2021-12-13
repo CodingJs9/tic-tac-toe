@@ -18,7 +18,7 @@ const gameController = (() => {
 
 	let currentTurn = playerX.getMarker();
 
-	const decideTurn = () => {
+	const changeTurn = () => {
 		currentTurn === playerX.getMarker()
 			? (currentTurn = playerO.getMarker())
 			: (currentTurn = playerX.getMarker());
@@ -27,7 +27,7 @@ const gameController = (() => {
 	const placeMarker = (tile) => {
 		if (gameBoard.board[tile.dataset.id] !== '') return;
 		gameBoard.board[tile.dataset.id] = currentTurn;
-		decideTurn();
+		changeTurn();
 		displayController.clearAndRender();
 	};
 
