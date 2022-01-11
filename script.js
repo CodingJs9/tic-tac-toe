@@ -36,10 +36,10 @@ const gameController = (() => {
 			: (currentTurn = playerX.getMarker());
 	};
 
-	const placeMarker = (tile) => {
+	const placeMarker = (tile, messageBox) => {
 		if (gameBoard.board[tile.dataset.id] !== '') return;
 		gameBoard.board[tile.dataset.id] = currentTurn;
-		checkWinner();
+		checkWinner(messageBox);
 		changeTurn();
 		displayController.clearAndRender();
 		turns++;
@@ -53,21 +53,29 @@ const gameController = (() => {
 		});
 	};
 
-	const checkWinner = () => {
+	const checkWinner = (messageBox) => {
 		if (checkWin(currentTurn)) {
-			console.log(`Player ${currentTurn} has won!`);
+			messageBox.innerText = `Player ${currentTurn} has won!`;
 		} else if (turns === 9) {
-			console.log(`That was a tie. Wanna play again?`);
+			messageBox.innerText = `That was a tie. Wanna play again?`;
 		}
 	};
 
-	return { placeMarker, checkWin };
+	return { placeMarker };
 })();
 
 // displayController module
 const displayController = (() => {
 	const grid = document.querySelector('.game-grid');
+	const messageBox = document.querySelector('.message');
+	const restartBtn = document.querySelector('.restart');
 	let idCounter = 0;
+
+	restartBtn.addEventListener('click', () => {
+		gameBoard.board = ['', '', '', '', '', '', '', '', ''];
+		messageBox.innerText = '';
+		clearAndRender();
+	});
 
 	const createTile = (tileContent) => {
 		const tile = document.createElement('div');
@@ -75,7 +83,7 @@ const displayController = (() => {
 		tile.dataset.id = idCounter;
 		tile.innerText = tileContent;
 		tile.addEventListener('click', () => {
-			gameController.placeMarker(tile, idCounter);
+			gameController.placeMarker(tile, messageBox);
 		});
 		grid.appendChild(tile);
 		idCounter++;
