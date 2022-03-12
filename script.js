@@ -14,7 +14,7 @@ const gameBoard = (() => {
 
 // gameController module
 const gameController = (() => {
-	let turns = 1;
+	let numOfTurns = 1;
 	const playerX = Player('X');
 	const playerO = Player('O');
 	const winningCombinations = [
@@ -42,7 +42,7 @@ const gameController = (() => {
 		checkWinner(messageBox);
 		changeTurn();
 		displayController.clearAndRender();
-		turns++;
+		numOfTurns++;
 	};
 
 	const checkWin = (currentTurn) => {
@@ -56,12 +56,20 @@ const gameController = (() => {
 	const checkWinner = (messageBox) => {
 		if (checkWin(currentTurn)) {
 			messageBox.innerText = `Player ${currentTurn} has won!`;
-		} else if (turns === 9) {
+		} else if (numOfTurns === 9) {
 			messageBox.innerText = `That was a tie. Wanna play again?`;
 		}
 	};
 
-	return { placeMarker };
+	const restartGame = () => {
+		gameBoard.board = ['', '', '', '', '', '', '', '', ''];
+		displayController.messageBox.innerText = '';
+		numOfTurns = 1;
+		currentTurn = playerX.getMarker();
+		displayController.clearAndRender();
+	};
+
+	return { placeMarker, restartGame, checkWin };
 })();
 
 // displayController module
@@ -72,9 +80,7 @@ const displayController = (() => {
 	let idCounter = 0;
 
 	restartBtn.addEventListener('click', () => {
-		gameBoard.board = ['', '', '', '', '', '', '', '', ''];
-		messageBox.innerText = '';
-		clearAndRender();
+		gameController.restartGame();
 	});
 
 	const createTile = (tileContent) => {
@@ -107,7 +113,7 @@ const displayController = (() => {
 		render();
 	};
 
-	return { clearAndRender };
+	return { clearAndRender, messageBox };
 })();
 
 displayController.clearAndRender();
